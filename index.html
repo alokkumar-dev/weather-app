@@ -1,12 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>check weather</title>
+    <title>weather</title>
+
+    <style>
+        .searchBar {
+            margin: 30px auto;
+            border: 1px solid black;
+            text-align: center;
+        }
+
+        #city {
+            padding: 8px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .searchBar>button {
+            font-size: 20px;
+            padding: 8px 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .container {
+            width: 90%;
+            display: flex;
+            margin: auto;
+            border: 1px solid black;
+
+        }
+
+        .leftSide {
+            border: 1px solid black;
+            width: 49%;
+            height: 400px;
+            margin-right: 2%;
+        }
+
+        .rightSideDiv {
+            border: 1px solid black;
+            width: 49%;
+            height: 400px;
+        }
+
+        .oneDayDiv {
+            border: 1px solid red;
+            width: 100%;
+            height: 200px;
+            margin: auto;
+            text-align: center;
+            display: flex;
+        }
+
+        .sevenDayDiv {
+            border: 1px solid red;
+            width: 100%;
+            height: 200px;
+        }
+        #gmap_canvas{
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Welcome to you in my weather app</h1>
+    <div class="searchBar">
+        <h2>Check Weather</h2>
+        <input type="text" id="city" placeholder="enter city name.">
+        <button onclick="getWeather()">Search</button>
+    </div>
+
+
+    <div class="container">
+        <div class="leftSide">
+            <div class="oneDayDiv"></div>
+            <div class="sevenDayDiv"></div>
+        </div>
+        <div class="rightSideDiv">
+        </div>
+    </div>
+
 </body>
+
 </html>
+<script>
+    // create a weather app
+
+    // 1. Accept input -->city name
+    // 2. fetch weather data (How ?)
+    // 3. Find correct API endpoint (url)
+    // //api.openweathermap.org/data/2.5/weather?q={city name}&appid={API key}
+
+    // let key = "";
+    // `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f54708523bef7b62ad34716409be8714`
+    async function getWeather() {
+        try {
+            let city = document.querySelector("#city").value;
+
+            let response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=f54708523bef7b62ad34716409be8714&units=metric`);
+
+            let data = await response.json();
+            displayWeather(data);
+            console.log("Data: ", data);
+
+
+
+        }
+        catch (error) {
+            console.log("Error :", error);
+        }
+    }
+    // getWeather();
+
+    function displayWeather(weather) {
+        // console.log(weather.name);
+        document.querySelector(".oneDayDiv").innerHTML = "";
+        let cityNameDiv = document.createElement("div");
+        let weatherDiv = document.createElement("div");
+        let ctityName = document.createElement("h2");
+        let temperature = document.createElement("h3");
+        let pressure = document.createElement("h3");
+        let humidity = document.createElement("h3");
+
+        ctityName.innerText = weather.name;
+        temperature.innerText = `Temp - ${weather.main.temp} °C`;
+        pressure.innerText = `Pressure - ${weather.main.pressure}`;
+        humidity.innerText = `Humidity - ${weather.main.pressure}`;
+
+        cityNameDiv.append(ctityName)
+        weatherDiv.append(temperature, pressure, humidity);
+        document.querySelector(".oneDayDiv").append(cityNameDiv, weatherDiv);
+
+        showMap();
+    }
+    
+    function showMap(){
+        document.querySelector(".rightSideDiv").innerHTML="";
+        let city = document.querySelector("#city").value;
+        var iframe = document.createElement("iframe");
+        iframe.setAttribute("id", "gmap_canvas");
+
+        iframe.src = `https://maps.google.com/maps?q=${city}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+
+   
+        document.querySelector(".rightSideDiv").append(iframe);
+    }
+
+</script>
